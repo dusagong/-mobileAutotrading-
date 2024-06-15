@@ -5,6 +5,7 @@ class Const{
 
   // 계좌번호 앞 8자리
   static String CANO = "64230483";
+  // static String CANO = "69595003";
   // 계좌번호 뒤 2자리
   static String ACNT_PRDT_CD = "01";
 
