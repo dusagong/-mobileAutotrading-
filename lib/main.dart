@@ -13,11 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-<<<<<<< HEAD
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-=======
         colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 0, 0, 0)),
->>>>>>> 30a07ccf35cdacc468cf7323d7fe3db2a749c9c0
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
@@ -25,16 +21,9 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-<<<<<<< HEAD
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
-=======
 class App extends StatefulWidget {
   const App({super.key});
 
->>>>>>> 30a07ccf35cdacc468cf7323d7fe3db2a749c9c0
   @override
   State<App> createState() => _AppState();
 }
