@@ -1,6 +1,1 @@
-{
-  "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
-  }
-}
+{"firestore":{"rules":"firestore.rules","indexes":"firestore.indexes.json"},"flutter":{"platforms":{"android":{"default":{"projectId":"mobile-auto-trading","appId":"1:86410707775:android:ed24ec1d299d033498098a","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"mobile-auto-trading","configurations":{"android":"1:86410707775:android:ed24ec1d299d033498098a","ios":"1:86410707775:ios:ddad47f45d7675ee98098a","macos":"1:86410707775:ios:5e5198874495b13198098a","web":"1:86410707775:web:90103f82276c3aab98098a","windows":"1:86410707775:web:1ffd965f52f7905b98098a"}}}}}}

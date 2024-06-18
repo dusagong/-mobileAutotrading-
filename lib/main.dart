@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:workmanager/workmanager.dart';
-
-void callbackDispatcher() {
-  Workmanager().executeTask((taskName,inputData){
-    print("Task exe :" + taskName);
-    return Future.value(true);
-  });
-}
-void main() {
+import 'package:trade_app/API/Kor/api.dart';
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Workmanager().initialize(callbackDispatcher);
-  runApp(const MyApp());
+
+
+  // String accessToken = await getAccessToken() ?? '';
+  String accessToken = 'hi';
+  getCollection();
+  runApp(MyApp(accessToken: accessToken));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String accessToken;
+
+  const MyApp({super.key,required this.accessToken});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +24,27 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const App(),
+      home:FutureBuilder(
+        future: algorithm(accessToken),  // Call your asynchronous function here
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Scaffold(
+              body: Center(
+                child: Text('Error: ${snapshot.error}'),
+              ),
+            );
+          } else {
+            // Once the future completes successfully, navigate to home screen
+            return const App();
+          }
+        },
+      )
     );
   }
 }
@@ -48,6 +67,7 @@ class _AppState extends State<App> {
     setState(() {
       _selectedIndex = index;
     });
+    print(index);
   }
   @override
   Widget build(BuildContext context) {
@@ -71,10 +91,6 @@ class _AppState extends State<App> {
         selectedItemColor: Colors.lightGreen,
         onTap: _onItemTapped, // 선언했던 onItemTapped
       ),
-      floatingActionButton: FloatingActionButton(onPressed: (){
-        Workmanager().registerOneOffTask("taskOne", "backUp");
-        print("ho");
-      }),
     );
   }
 }

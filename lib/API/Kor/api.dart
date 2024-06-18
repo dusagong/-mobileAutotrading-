@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'const.dart';
@@ -18,10 +19,11 @@ final String DISCORD_WEBHOOK_URL = Const.DISCORD_WEBHOOK_URL;
 // ignore: non_constant_identifier_names
 final String URL_BASE = Const.URL_BASE;
 
-Future<void> algorithm() async {
+Future<void> algorithm(String accessT) async {
   try {
-    ACCESS_TOKEN = await getAccessToken();
-
+    // ACCESS_TOKEN = await getAccessToken();
+    ACCESS_TOKEN = accessT;
+    
     List<String> symbolList = ["106240", "109740", "001790", "003380", "005880", "011200", "012030", "014190", "028670", "095610", "084650", "065420", "064480", "049180", "047400", "045300", "035890", "033540", "032580", "030200"];
     List<String> boughtList = [];
     int totalCash = await getBalance();
@@ -303,4 +305,13 @@ Future<bool> sell(String code, String qty) async {
     await sendMessage("[매도 실패] $result");
     return false;
   }
+}
+Future<void> getCollection() async {
+  FirebaseFirestore db = FirebaseFirestore.instance;
+
+  await db.collection("US").get().then((event) {
+  for (var doc in event.docs) {
+    print("${doc.id} => ${doc.data()}");
+  }
+});
 }
