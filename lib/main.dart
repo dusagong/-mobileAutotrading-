@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:trade_app/API/Kor/api.dart';
-void main() async {
+import 'package:trade_app/back_service.dart';
+
+
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-
-  // String accessToken = await getAccessToken() ?? '';
-  String accessToken = 'hi';
+  
   getCollection();
-  runApp(MyApp(accessToken: accessToken));
+  // await initializeService();
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  final String accessToken;
 
-  const MyApp({super.key,required this.accessToken});
+class MyApp extends StatelessWidget {
+
+
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +28,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       home:FutureBuilder(
-        future: algorithm(accessToken),  // Call your asynchronous function here
+        future: initializeService(),  // Call your asynchronous function here
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Scaffold(
@@ -36,7 +39,7 @@ class MyApp extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Scaffold(
               body: Center(
-                child: Text('Error: ${snapshot.error}'),
+                child: Text('Error: ${snapshot.error}'),  
               ),
             );
           } else {

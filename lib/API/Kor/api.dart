@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -18,7 +19,33 @@ final String ACNT_PRDT_CD = Const.ACNT_PRDT_CD;
 final String DISCORD_WEBHOOK_URL = Const.DISCORD_WEBHOOK_URL;
 // ignore: non_constant_identifier_names
 final String URL_BASE = Const.URL_BASE;
+Future<bool> StartCheck() async {
+  try {
+    // ACCESS_TOKEN = await getAccessToken();
 
+    DateTime now = DateTime.now();
+    DateTime t9 = DateTime(now.year, now.month, now.day, 9);
+    DateTime tStart = DateTime(now.year, now.month, now.day, 9, 2);
+    DateTime tSell = DateTime(now.year, now.month, now.day, 15, 15);
+    DateTime tExit = DateTime(now.year, now.month, now.day, 15, 20);
+    int today = now.weekday;
+
+    if (today == 6 || today == 7) {
+      await sendMessage("주말이므로 프로그램을 종료합니다.");
+      return false;
+    }
+
+    if (tExit.isBefore(now)) {
+      await sendMessage("프로그램을 종료합니다.");
+      return false;
+
+    }
+    return true;
+  } catch (e) {
+    await sendMessage("[오류 발생] $e");
+    return false;
+  }
+}
 Future<void> algorithm(String accessT) async {
   try {
     // ACCESS_TOKEN = await getAccessToken();
@@ -30,58 +57,53 @@ Future<void> algorithm(String accessT) async {
     int buyAmount = (totalCash * 0.33).toInt();
 
     await sendMessage("===국내 주식 자동매매 프로그램을 시작합니다===");
-    while (true) {
-      DateTime now = DateTime.now();
-      DateTime t9 = DateTime(now.year, now.month, now.day, 9);
-      DateTime tStart = DateTime(now.year, now.month, now.day, 9, 2);
-      DateTime tSell = DateTime(now.year, now.month, now.day, 15, 15);
-      DateTime tExit = DateTime(now.year, now.month, now.day, 15, 20);
-      int today = now.weekday;
+    DateTime now = DateTime.now();
+    DateTime t9 = DateTime(now.year, now.month, now.day, 9);
+    DateTime tStart = DateTime(now.year, now.month, now.day, 9, 2);
+    DateTime tSell = DateTime(now.year, now.month, now.day, 15, 15);
+    DateTime tExit = DateTime(now.year, now.month, now.day, 15, 20);
+    int today = now.weekday;
 
-      if (today == 6 || today == 7) {
-        await sendMessage("주말이므로 프로그램을 종료합니다.");
-        break;
-      }
+    if (today == 6 || today == 7) {
+      await sendMessage("주말이므로 프로그램을 종료합니다.");
+    }
 
-      if (t9.isBefore(now) && tStart.isAfter(now)) {
-        // 잔여 수량 매도
-        // stock_dict = await getStockBalance();
-      }
+    if (t9.isBefore(now) && tStart.isAfter(now)) {
+      // 잔여 수량 매도
+      // stock_dict = await getStockBalance();
+    }
 
-      if (tStart.isBefore(now) && tSell.isAfter(now)) {
-        for (String sym in symbolList) {
-          if (boughtList.length < 3) {
-            if (boughtList.contains(sym)) continue;
-            int targetPrice = await getTargetPrice(sym);
-            int currentPrice = await getCurrentPrice(sym);
-            if (targetPrice < currentPrice) {
-              int buyQty = (buyAmount ~/ currentPrice);
-              if (buyQty > 0) {
-                await sendMessage("$sym 목표가 달성($targetPrice < $currentPrice) 매수를 시도합니다.");
-                bool result = await buy(sym, buyQty.toString());
-                if (result) {
-                  boughtList.add(sym);
-                  // await getStockBalance();
-                  break;
-                }
+    if (tStart.isBefore(now) && tSell.isAfter(now)) {
+      for (String sym in symbolList) {
+        if (boughtList.length < 3) {
+          if (boughtList.contains(sym)) continue;
+          int targetPrice = await getTargetPrice(sym);
+          int currentPrice = await getCurrentPrice(sym);
+          if (targetPrice < currentPrice) {
+            int buyQty = (buyAmount ~/ currentPrice);
+            if (buyQty > 0) {
+              await sendMessage("$sym 목표가 달성($targetPrice < $currentPrice) 매수를 시도합니다.");
+              bool result = await buy(sym, buyQty.toString());
+              if (result) {
+                boughtList.add(sym);
+                // await getStockBalance();
+                break;
               }
             }
           }
         }
       }
-
-      if (tSell.isBefore(now) && tExit.isAfter(now)) {
-        // 일괄 매도
-        // stock_dict = await getStockBalance();
-      }
-
-      if (tExit.isBefore(now)) {
-        await sendMessage("프로그램을 종료합니다.");
-        break;
-      }
-
-      await Future.delayed(const Duration(seconds: 1));
     }
+
+    if (tSell.isBefore(now) && tExit.isAfter(now)) {
+      // 일괄 매도
+      // stock_dict = await getStockBalance();
+    }
+
+    if (tExit.isBefore(now)) {
+      await sendMessage("프로그램을 종료합니다.");
+    }
+
   } catch (e) {
     await sendMessage("[오류 발생] $e");
   }
