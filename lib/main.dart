@@ -1,12 +1,16 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:trade_app/API/Kor/api.dart';
 import 'package:trade_app/back_service.dart';
+import 'package:trade_app/firebase_options.dart';
 
 
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   getCollection();
   // await initializeService();
   runApp(MyApp());
